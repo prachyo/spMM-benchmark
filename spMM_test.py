@@ -1,7 +1,9 @@
+import numba
 import scipy.sparse as sp
 import numpy as np
 from spMM_CSR import benchmark_spmm, profile_spmm
 from spMM_CSR_blocked import benchmark_spmm_block
+from spMM_cuSPARSE_blocked import benchmark_cuSPARSE_blocked
 import time
 import cupy as cp
 
@@ -56,6 +58,7 @@ def benchmark_cuSPARSE(A, B, C):
     print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
 
 def main():
+
     # Create a sparse matrix in CSR format
     A = sp.random(2048, 2048, density=0.4, format='csr')
     B = np.random.rand(2048, 2048).astype(np.float32)
@@ -67,6 +70,8 @@ def main():
     benchmark_spmm(A, B, C)
     benchmark_spmm_block(A, B, C_block, block_size=128)
     benchmark_cuSPARSE(A, B, C)
+    benchmark_cuSPARSE_blocked(A, B, C_block, block_size=128)
+    
 
 if __name__ == "__main__":
     main()
