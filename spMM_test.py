@@ -4,6 +4,7 @@ import numpy as np
 from spMM_CSR import benchmark_spmm, profile_spmm
 from spMM_CSR_blocked import benchmark_spmm_block
 from spMM_cuSPARSE_blocked import benchmark_cuSPARSE_blocked
+from spMM_cuSPARSE_csrmm import benchmark_cuSPARSE_csrmm
 import time
 import cupy as cp
 
@@ -70,7 +71,10 @@ def main():
     benchmark_spmm(A, B, C)
     benchmark_spmm_block(A, B, C_block, block_size=128)
     benchmark_cuSPARSE(A, B, C)
-    benchmark_cuSPARSE_blocked(A, B, C_block, block_size=128)
+    benchmark_cuSPARSE_csrmm(A, B, C)
+    #benchmark_cuSPARSE_blocked(A, B, C_block, block_size=128)
+
+    return
     
 
 if __name__ == "__main__":

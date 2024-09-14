@@ -1,3 +1,4 @@
+import time
 import cupy as cp
 import numpy as np
 import scipy.sparse as sp
@@ -70,7 +71,9 @@ def csr_to_bsr(A_csr, block_size):
     # Return the output of conversion from csr to bsr
     return bsr_values, bsr_col_ind, bsr_row_ptr, mb, nb
 
-def cusparse_csrmm(A_csr, B, C):
+def benchmark_cuSPARSE_csrmm(A_csr, B, C):
+
+    C_actual = A_csr.dot(B)
 
     # Extract CSR matrix components
     A_data = A_csr.data
@@ -87,7 +90,10 @@ def cusparse_csrmm(A_csr, B, C):
     d_A_indices = cp.asarray(A_indices, dtype=cp.int32)
     d_A_indptr = cp.asarray(A_indptr, dtype=cp.int32)
     d_B = cp.asarray(B, dtype=cp.float32)
-    d_C = cp.zeros((M, N), dtype=cp.float32)  # Allocate space for output matrix C
+    # Create a zero-initialized matrix for C
+    d_C = cp.asarray(C, dtype=cp.float32)
+
+    #d_C = cp.zeros((M, N), dtype=cp.float32)  # Allocate space for output matrix C
 
     # Create matrix descriptor
     descr = ctypes.c_void_p()
@@ -154,6 +160,8 @@ def cusparse_csrmm(A_csr, B, C):
 
     d_buffer = cp.cuda.memory.alloc(buffer_size.value)
 
+    start = time.time()
+
     # Perform SpMM (Sparse Matrix x Dense Matrix)
     cusparse.cusparseSpMM(
         cusparse_handle,
@@ -167,37 +175,57 @@ def cusparse_csrmm(A_csr, B, C):
         ctypes.c_int(CUDA_R_32F),
         ctypes.c_int(CUSPARSE_ALG_DEFAULT),  # Correct algorithm for CSR
         d_buffer.ptr)
+    
+    end = time.time()
+
+    execution_time_s = end - start
+
+    # Calculate FLOPs (only for non-zero elements in A)
+    nnz_A = len(A_csr.data)  # Number of non-zero elements in sparse matrix A
+    FLOP_count = 2 * nnz_A * B.shape[1]  # Each non-zero in A performs 2*N operations (1 mul, 1 add)
+
+    # Calculate FLOP/s
+    FLOP_s = FLOP_count / execution_time_s  # FLOP/s
+    GFLOP_s = FLOP_s / 1e9  # GFLOP/s
+
+    # Calculate memory bandwidth
+    bytes_transferred = (A_csr.data.nbytes + A_csr.indices.nbytes + A_csr.indptr.nbytes +
+                         B.nbytes + C.nbytes)
+    memory_bandwidth = (bytes_transferred / execution_time_s) / 1e9 # GB/s
+
+    print(f"\ncuSPARSE Blocked Metrics:")
+    print("Is soln correct? ", np.allclose(C, C_actual, atol=1e-6))
+    print(f"Execution Time: {execution_time_s:.6f} seconds")
+    print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
+    print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
 
     # Synchronize the GPU
     #cp.cuda.Device().synchronize()
 
     # Copy the result back to the host
     # convert C_desc to numpy
-    matC_data_ptr = ctypes.c_void_p()
-    cusparse.cusparseDnMatGetValues(C_desc, ctypes.byref(matC_data_ptr))
-    memptr = cp.cuda.memory.MemoryPointer(cp.cuda.BaseMemory(), matC_data_ptr.value)
-    C_gpu = cp.ndarray((M, N), dtype=cp.float32, memptr=memptr)
-    C_cpu = cp.asnumpy(C_gpu)
+    #matC_data_ptr = ctypes.c_void_p()
+    #cusparse.cusparseDnMatGetValues(C_desc, ctypes.byref(matC_data_ptr))
+    #memptr = cp.cuda.memory.MemoryPointer(cp.cuda.BaseMemory(), matC_data_ptr.value)
+    #C_gpu = cp.ndarray((M, N), dtype=cp.float32, memptr=memptr)
+    #C_cpu = cp.asnumpy(C_gpu)
 
-    return C_cpu
+    return
 
 
 def main():
     # Create a sparse matrix in CSR format
-    A = sp.random(4, 4, density=0.4, format='csr')
+    A = sp.random(2048, 2048, density=0.4, format='csr')
     # Create dense matrix in NumPy called B
-    B = np.random.rand(4, 4).astype(np.float32)
+    B = np.random.rand(2048, 2048).astype(np.float32)
     C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
 
     C_actual = A.dot(B)
-    print(C_actual)
 
     # Run the test
-    result = cusparse_csrmm(A, B, C)
-    print(result)
-
-    print(np.allclose(result, C_actual, atol=1e-6))
+    benchmark_cuSPARSE_csrmm(A, B, C)
 
 if __name__ == '__main__':
     main()
+
 
