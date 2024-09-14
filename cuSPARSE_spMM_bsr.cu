@@ -35,7 +35,7 @@
     }                                                                          \
 }
 
-void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_nnz, int B_num_cols, int block_size,
+extern "C" void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_nnz, int B_num_cols, int block_size,
                                const int* hA_csrOffsets, const int* hA_columns,
                                const float* hA_values, const float* hB,
                                float* hC) {
@@ -86,10 +86,27 @@ void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_nnz, int B_
     // Perform BSRMM
     float alpha = 1.0f;
     float beta = 0.0f;
+
+    // Create CUDA events for timing
+    cudaEvent_t start, stop;
+    CHECK_CUDA(cudaEventCreate(&start));
+    CHECK_CUDA(cudaEventCreate(&stop));
+
+    // Record start event
+    CHECK_CUDA(cudaEventRecord(start, 0));
+
     CHECK_CUSPARSE(cusparseSbsrmm(handle, CUSPARSE_DIRECTION_ROW, CUSPARSE_OPERATION_NON_TRANSPOSE,
                                   CUSPARSE_OPERATION_NON_TRANSPOSE, mb, B_num_cols, nb, nnzb, &alpha,
                                   descr, dA_bsrValues, dA_bsrOffsets, dA_bsrColumns, block_size,
                                   dB, A_num_cols, &beta, dC, A_num_rows));
+
+    // Record stop event
+    CHECK_CUDA(cudaEventRecord(stop, 0));
+    CHECK_CUDA(cudaEventSynchronize(stop));
+
+    // Calculate elapsed time
+    float milliseconds = 0;
+    CHECK_CUDA(cudaEventElapsedTime(&milliseconds, start, stop));
 
     // Copy result from device to host
     CHECK_CUDA(cudaMemcpy(hC, dC, A_num_rows * B_num_cols * sizeof(float), cudaMemcpyDeviceToHost));
@@ -106,6 +123,15 @@ void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_nnz, int B_
 
     CHECK_CUSPARSE(cusparseDestroyMatDescr(descr));
     CHECK_CUSPARSE(cusparseDestroy(handle));
+
+    // Calculate GFLOPs and memory bandwidth
+    float gflops = (2.0f * A_nnz * B_num_cols) / (milliseconds / 1000.0f) / 1e9f;
+    float memory_bandwidth = (A_nnz * sizeof(float) + A_nnz * sizeof(int) + A_num_rows * sizeof(int) + A_num_cols * B_num_cols * sizeof(float) + A_num_rows * B_num_cols * sizeof(float)) / (milliseconds / 1000.0f) / 1e9f;
+
+    printf("\ncuSPARSE BSR SpMM Metrics:\n");
+    printf("Execution time: %f ms\n", milliseconds);
+    printf("GFLOPs: %f\n", gflops);
+    printf("Memory Bandwidth: %f GB/s\n", memory_bandwidth);
 }
 
 void matrixMultiplyCUBLAS(int A_num_rows, int A_num_cols, int B_num_cols, const float* hA, const float* hB, float* hC) {
