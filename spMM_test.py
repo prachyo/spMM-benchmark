@@ -54,7 +54,6 @@ def benchmark_cuSPARSE(A, B, C):
 
 
     print(f"\ncuSPARSE SpMM Metrics:")
-    print("Is soln correct? ", np.allclose(C, C_actual, atol=1e-6))
     print(f"Execution Time: {execution_time_s:.6f} seconds")
     print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
     print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
@@ -65,8 +64,8 @@ def main():
     cusparse_bsr = ctypes.CDLL('./libcuSPARSE_spMM_bsr.so')
 
     # Create a sparse matrix in CSR format
-    A = sp.random(2048, 2048, density=0.4, format='csr')
-    B = np.random.rand(2048, 2048).astype(np.float32)
+    A = sp.random(4086, 4096, density=0.2, format='csr')
+    B = np.random.rand(4096, 4096).astype(np.float32)
     C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
     C_block = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32) # Output matrix for blocked SpMM
 

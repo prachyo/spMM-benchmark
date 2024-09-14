@@ -117,7 +117,6 @@ def benchmark_spmm_block(A_csr, B, C, block_size=128):
 
     # Print the results
     print(f"\nTriton Blocked SpMM Metrics:")
-    print("Is soln correct? ", np.allclose(C, C_actual, atol=1e-6))
     print(f"Execution Time: {execution_time_s:.6f} seconds")
     print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
     print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")

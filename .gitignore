@@ -1,0 +1,9 @@
+# Files on my personal repo not ready to be shared
+spmm_batched_csr.c 
+test_bsr.cu
+spMM_cuSPARSE_csrmm.py
+spMM_cuSPARSE_blocked.py
+
+# Build files
+build/
+__pycache__/

@@ -124,14 +124,17 @@ extern "C" void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_
     CHECK_CUSPARSE(cusparseDestroyMatDescr(descr));
     CHECK_CUSPARSE(cusparseDestroy(handle));
 
+    float execution_time_s = milliseconds / 1000.0f;
+
     // Calculate GFLOPs and memory bandwidth
-    float gflops = (2.0f * A_nnz * B_num_cols) / (milliseconds / 1000.0f) / 1e9f;
-    float memory_bandwidth = (A_nnz * sizeof(float) + A_nnz * sizeof(int) + A_num_rows * sizeof(int) + A_num_cols * B_num_cols * sizeof(float) + A_num_rows * B_num_cols * sizeof(float)) / (milliseconds / 1000.0f) / 1e9f;
+    float gflops = (2.0f * A_nnz * B_num_cols) / execution_time_s / 1e9f;
+    float bytes_transferred = (A_nnz * sizeof(float) + A_nnz * sizeof(int) + A_num_rows * sizeof(int) + A_num_cols * B_num_cols * sizeof(float) + A_num_rows * B_num_cols * sizeof(float));
+    float memory_bandwidth = bytes_transferred / execution_time_s / 1e9f;
 
     printf("\ncuSPARSE BSR SpMM Metrics:\n");
-    printf("Execution time: %f ms\n", milliseconds);
-    printf("GFLOPs: %f\n", gflops);
-    printf("Memory Bandwidth: %f GB/s\n", memory_bandwidth);
+    printf("Execution time: %f seconds\n", execution_time_s);
+    printf("GFLOP/s: %f\n", gflops);
+    printf("Memory Bandwidth: %.2f GB/s\n", memory_bandwidth);
 }
 
 void matrixMultiplyCUBLAS(int A_num_rows, int A_num_cols, int B_num_cols, const float* hA, const float* hB, float* hC) {
