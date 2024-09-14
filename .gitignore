@@ -7,3 +7,4 @@ spMM_cuSPARSE_blocked.py
 # Build files
 build/
 __pycache__/
+*.so
