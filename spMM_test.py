@@ -1,6 +1,7 @@
 import scipy.sparse as sp
 import numpy as np
 from spMM_CSR import spmm_gustavson_csr, spmm_gustavson_csr_block, benchmark_spmm, profile_spmm
+from spMM_CSR_blocked import benchmark_spmm_block
 import time
 import cupy as cp
 
@@ -9,6 +10,7 @@ def main():
     A = sp.random(1024, 1024, density=0.2, format='csr')
     B = np.random.rand(1024, 1024).astype(np.float32)
     C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
+    C_block = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32) # Output matrix for blocked SpMM
 
     """
     # Call the Triton-based spMM function using Gustavson's algorithm
@@ -42,6 +44,7 @@ def main():
     #Run the benchmark
     print("Running benchmark...")
     benchmark_spmm(A, B, C, block_size=128)
+    benchmark_spmm_block(A, B, C_block, block_size=64)
 
     # Perform SpMM: A_csr * B using cuSPARSE via cuPy
     A_csr = cp.sparse.csr_matrix((cp.array(A.data),
