@@ -131,7 +131,7 @@ extern "C" void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_
     float bytes_transferred = (A_nnz * sizeof(float) + A_nnz * sizeof(int) + A_num_rows * sizeof(int) + A_num_cols * B_num_cols * sizeof(float) + A_num_rows * B_num_cols * sizeof(float));
     float memory_bandwidth = bytes_transferred / execution_time_s / 1e9f;
 
-    printf("\ncuSPARSE BSR SpMM Metrics:\n");
+    printf("\n-----cuSPARSE BSR SpMM Metrics:\n");
     printf("Execution time: %f seconds\n", execution_time_s);
     printf("GFLOP/s: %f\n", gflops);
     printf("Memory Bandwidth: %.2f GB/s\n", memory_bandwidth);

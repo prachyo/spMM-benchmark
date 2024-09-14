@@ -1,3 +1,4 @@
+import argparse
 import ctypes
 import numba
 import scipy.sparse as sp
@@ -8,6 +9,9 @@ from spMM_cuSPARSE_blocked import benchmark_cuSPARSE_blocked
 from spMM_cuSPARSE_csrmm import benchmark_cuSPARSE_csrmm
 import time
 import cupy as cp
+
+# Load the shared library
+cusparse_bsr = ctypes.CDLL('./libcuSPARSE_spMM_bsr.so')
 
 def benchmark_cuSPARSE(A, B, C):
     # A is a sparse matrix in CSR format from SciPy
@@ -53,24 +57,24 @@ def benchmark_cuSPARSE(A, B, C):
 
 
 
-    print(f"\ncuSPARSE SpMM Metrics:")
+    print(f"\n-----cuSPARSE SpMM Metrics:")
     print(f"Execution Time: {execution_time_s:.6f} seconds")
     print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
     print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
 
-def main():
+def run_experiment(block_size, dim, density):
+    # runs the four benchmarks with the given parameters
 
-    # Load the shared library
-    cusparse_bsr = ctypes.CDLL('./libcuSPARSE_spMM_bsr.so')
-
-    # Create a sparse matrix in CSR format
-    A = sp.random(4086, 4096, density=0.2, format='csr')
-    B = np.random.rand(4096, 4096).astype(np.float32)
+    # Create a sparse matrix in CSR format dim dimensions
+    A = sp.random(dim, dim, density, format='csr')
+    B = np.random.rand(dim, dim).astype(np.float32)
     C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
     C_block = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32) # Output matrix for blocked SpMM
 
-    #Run the benchmark
-    print("Running benchmarks...")
+    # Print header for experiment
+    print(f"\n================ m = n = k = {dim}, density = {density}, b = {block_size} ===================")
+
+    # Run the benchmark
     benchmark_spmm(A, B, C)
     benchmark_spmm_block(A, B, C_block, block_size=128)
     benchmark_cuSPARSE(A, B, C)
@@ -89,10 +93,23 @@ def main():
         )
     except Exception as e:
         print(f"Error calling cuSPARSE_bsr function: {e}")
-    #benchmark_cuSPARSE_csrmm(A, B, C)
-    #benchmark_cuSPARSE_blocked(A, B, C_block, block_size=128)
 
-    return
+def main():
+
+    parser = argparse.ArgumentParser(description='Run SpMM benchmark')
+    
+    parser.add_argument('dim', type=int, help='Matrix dimension (n)')
+    parser.add_argument('density', type=float, help='Sparsity density of the matrix')
+    parser.add_argument('block_size', type=int, help='Block size for blocked SpMM')
+
+    args = parser.parse_args()
+
+    # Access the arguments
+    dim = args.dim
+    density = args.density
+    block_size = args.block_size
+
+    run_experiment(block_size, dim, density)
     
 
 if __name__ == "__main__":

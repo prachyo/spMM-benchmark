@@ -16,9 +16,20 @@ all: $(CUDA_LIB) run_python
 $(CUDA_LIB): $(CUDA_SOURCES)
 	$(NVCC) -o $(CUDA_LIB) $(CUDA_SOURCES) $(NVCC_FLAGS)
 
+# Values for the loops
+BLOCK_SIZES = 32 64 128
+DIMS = 1024 2048 4096
+DENSITIES = 0.01 0.1 0.5
+
 # Rule for running the Python script
 run_python:
-	python3 $(PYTHON_SCRIPT)
+	@for block_size in $(BLOCK_SIZES); do \
+		for dim in $(DIMS); do \
+			for density in $(DENSITIES); do \
+				python3 spMM_test.py $$dim $$density $$block_size; \
+			done; \
+		done; \
+	done
 
 # Clean up
 clean:

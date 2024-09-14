@@ -116,7 +116,7 @@ def benchmark_spmm_block(A_csr, B, C, block_size=128):
     C[:] = C_ptr.cpu().numpy()
 
     # Print the results
-    print(f"\nTriton Blocked SpMM Metrics:")
+    print(f"\n-----Triton Blocked SpMM Metrics:")
     print(f"Execution Time: {execution_time_s:.6f} seconds")
     print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
     print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
