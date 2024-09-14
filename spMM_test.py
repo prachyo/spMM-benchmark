@@ -1,66 +1,36 @@
 import scipy.sparse as sp
 import numpy as np
-from spMM_CSR import spmm_gustavson_csr, spmm_gustavson_csr_block, benchmark_spmm, profile_spmm
+from spMM_CSR import benchmark_spmm, profile_spmm
 from spMM_CSR_blocked import benchmark_spmm_block
 import time
 import cupy as cp
 
-def main():
-    # Create a sparse matrix in CSR format
-    A = sp.random(1024, 1024, density=0.2, format='csr')
-    B = np.random.rand(1024, 1024).astype(np.float32)
-    C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
-    C_block = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32) # Output matrix for blocked SpMM
-
-    """
-    # Call the Triton-based spMM function using Gustavson's algorithm
-    gustavson_kernel, C_naive = spmm_gustavson_csr(A, B, C)
-    gustavson_block_kernel, C_block = spmm_gustavson_csr_block(A, B, C_block, block_size_rows=2)
-    
-
-    print("Result from naive Triton spMM with Gustavson's Algorithm:")
-    print(C)
-
-    print("Result from Triton spMM with Gustavson's Algorithm and block processing:")
-    print(C_block)
-
-    # Verification using SciPy's built-in sparse matrix multiplication
-    C_scipy = A.dot(B)  # SciPy's built-in CSR * dense multiplication
-
-    print("Expected result from SciPy's CSR matrix multiplication:")
-    print(C_scipy)
-
-    # Compare the two results
-    if np.allclose(C, C_scipy, atol=1e-6):
-        print("Triton naive kernel result matches SciPy's result!")
-    else:
-        print("Results do not match. Triton kernel may have an issue.")
-
-    if np.allclose(C_block, C_scipy, atol=1e-6):
-        print("Triton blocked naive kernel result matches SciPy's result!")
-    else:
-        print("Results do not match. Triton kernel may have an issue.")
-    """
-    #Run the benchmark
-    print("Running benchmark...")
-    benchmark_spmm(A, B, C, block_size=128)
-    benchmark_spmm_block(A, B, C_block, block_size=64)
+def benchmark_cuSPARSE(A, B, C):
+    # A is a sparse matrix in CSR format from SciPy
+    # B is a dense matrix from NumPy
+    # C is the output matrix from NumPy
 
     # Perform SpMM: A_csr * B using cuSPARSE via cuPy
+    C_actual = A.dot(B)  # Expected result from SciPy's CSR * dense multiplication
+
     A_csr = cp.sparse.csr_matrix((cp.array(A.data),
-                              cp.array(A.indices),
-                              cp.array(A.indptr)),
-                             shape=A.shape)
-    start = time.time()
+                                  cp.array(A.indices),
+                                  cp.array(A.indptr)),
+                                 shape=A.shape)
+
     B_cp = cp.array(B)
-    C_cp = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
+    C_cp = cp.array(C)
+
+    # Start event for cuSPARSE spMM
+    start = time.time()
+
+    # Run event and synchronize
     C_cp = A_csr.dot(B_cp)  # This internally uses cuSPARSE for sparse-dense matrix multiplication
     cp.cuda.Device().synchronize()  # Ensure all operations are done
     end = time.time()
 
-    # Run the PyTorch Profiler
-    #print("\nRunning profiler...")
-    #profile_spmm(A, B, C, block_size=128)
+    # Convert C_cp to NumPy array
+    C = C_cp.get()
 
     execution_time_s = end - start
 
@@ -70,16 +40,33 @@ def main():
 
     # Calculate FLOP/s
     FLOP_s = FLOP_count / execution_time_s  # FLOP/s
+    GFLOP_s = FLOP_s / 1e9  # GFLOP/s
 
     # Calculate memory bandwidth
     bytes_transferred = (A_csr.data.nbytes + A.indices.nbytes + A.indptr.nbytes +
                          B.nbytes + C.nbytes)
-    memory_bandwidth = bytes_transferred / execution_time_s  # B/s
+    memory_bandwidth = (bytes_transferred / execution_time_s) / 1e9 # GB/s
+
+
 
     print(f"\ncuSPARSE SpMM Metrics:")
+    print("Is soln correct? ", np.allclose(C, C_actual, atol=1e-6))
     print(f"Execution Time: {execution_time_s:.6f} seconds")
-    print(f"FLOP/s: {FLOP_s:.2f} FLOP/s")
-    print(f"Memory Bandwidth: {memory_bandwidth:.2f} B/s")
+    print(f"GFLOP/s: {GFLOP_s:.2f} GFLOP/s")
+    print(f"Memory Bandwidth: {memory_bandwidth:.2f} GB/s")
+
+def main():
+    # Create a sparse matrix in CSR format
+    A = sp.random(2048, 2048, density=0.4, format='csr')
+    B = np.random.rand(2048, 2048).astype(np.float32)
+    C = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32)
+    C_block = np.zeros((A.shape[0], B.shape[1]), dtype=np.float32) # Output matrix for blocked SpMM
+
+    #Run the benchmark
+    print("Running benchmarks...")
+    benchmark_spmm(A, B, C)
+    benchmark_spmm_block(A, B, C_block, block_size=128)
+    benchmark_cuSPARSE(A, B, C)
 
 if __name__ == "__main__":
     main()
