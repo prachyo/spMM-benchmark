@@ -1,5 +1,5 @@
 # spMM-benchmark
-These are sample programs I've written to test the formance of Triton kernels. You may find more details about each program below!
+These are sample programs I've written to test the performance of Triton kernels. You may find more details about each program below!
 
 ## Sample Programs
 `spMM_CSR.py`  - A naive Triton kernel performing spMM using Gustavson's algorithm. Also includes a handler and benchmarking methods 
