@@ -81,22 +81,7 @@ def run_experiment(block_size, dim, density):
     # Run the benchmark
     benchmark_spmm(A, B, C)
     benchmark_spmm_block(A, B, C_block, block_size=128)
-    #benchmark_cuSPARSE(A, B, C) # benchmark for scipy's csr mm
-    try:
-        cusparse_bsr.benchmark_cusparseSpMMBSR(
-            ctypes.c_int(A.shape[0]),
-            ctypes.c_int(A.shape[1]),
-            ctypes.c_int(A.nnz),
-            ctypes.c_int(B.shape[1]),
-            ctypes.c_int(128),  # Block size
-            ctypes.c_void_p(A.indptr.ctypes.data),
-            ctypes.c_void_p(A.indices.ctypes.data),
-            ctypes.c_void_p(A.data.ctypes.data),
-            ctypes.c_void_p(B.ctypes.data),
-            ctypes.c_void_p(C.ctypes.data),
-        )
-    except Exception as e:
-        print(f"Error calling cuSPARSE_bsr function: {e}")
+    benchmark_cuSPARSE(A, B, C) # benchmark for scipy's csr mm
 
     try:
         cusparse_bsr.benchmark_cusparseSpMMCSR(
@@ -112,6 +97,22 @@ def run_experiment(block_size, dim, density):
         )
     except Exception as e:
         print(f"Error calling cuSPARSE_csr function: {e}")
+
+    try:
+        cusparse_bsr.benchmark_cusparseSpMMBSR(
+            ctypes.c_int(A.shape[0]),
+            ctypes.c_int(A.shape[1]),
+            ctypes.c_int(A.nnz),
+            ctypes.c_int(B.shape[1]),
+            ctypes.c_int(128),  # Block size
+            ctypes.c_void_p(A.indptr.ctypes.data),
+            ctypes.c_void_p(A.indices.ctypes.data),
+            ctypes.c_void_p(A.data.ctypes.data),
+            ctypes.c_void_p(B.ctypes.data),
+            ctypes.c_void_p(C.ctypes.data),
+        )
+    except Exception as e:
+        print(f"Error calling cuSPARSE_bsr function: {e}")
 
 def main():
 

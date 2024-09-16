@@ -7,9 +7,9 @@ GFLOP/s: 0.00 GFLOP/s
 Memory Bandwidth: 176.11 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.000740 seconds
+Execution Time: 0.000774 seconds
 GFLOP/s: 0.00 GFLOP/s
-Memory Bandwidth: 181.44 GB/s
+Memory Bandwidth: 173.40 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.000527 seconds
@@ -29,9 +29,9 @@ GFLOP/s: 81.30 GFLOP/s
 Memory Bandwidth: 4.09 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.034112 seconds
-GFLOP/s: 80.58 GFLOP/s
-Memory Bandwidth: 4.05 GB/s
+Execution Time: 0.034257 seconds
+GFLOP/s: 80.24 GFLOP/s
+Memory Bandwidth: 4.04 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.355901 seconds
@@ -51,8 +51,8 @@ GFLOP/s: 83.32 GFLOP/s
 Memory Bandwidth: 2.16 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.066831 seconds
-GFLOP/s: 82.26 GFLOP/s
+Execution Time: 0.066842 seconds
+GFLOP/s: 82.25 GFLOP/s
 Memory Bandwidth: 2.13 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
@@ -73,9 +73,9 @@ GFLOP/s: 84.24 GFLOP/s
 Memory Bandwidth: 1.49 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.099236 seconds
-GFLOP/s: 83.10 GFLOP/s
-Memory Bandwidth: 1.47 GB/s
+Execution Time: 0.099102 seconds
+GFLOP/s: 83.21 GFLOP/s
+Memory Bandwidth: 1.48 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.335350 seconds
@@ -95,9 +95,9 @@ GFLOP/s: 84.92 GFLOP/s
 Memory Bandwidth: 1.16 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.131588 seconds
-GFLOP/s: 83.56 GFLOP/s
-Memory Bandwidth: 1.14 GB/s
+Execution Time: 0.138044 seconds
+GFLOP/s: 79.65 GFLOP/s
+Memory Bandwidth: 1.09 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.457851 seconds
@@ -117,9 +117,9 @@ GFLOP/s: 85.33 GFLOP/s
 Memory Bandwidth: 0.96 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.163488 seconds
-GFLOP/s: 84.07 GFLOP/s
-Memory Bandwidth: 0.94 GB/s
+Execution Time: 0.165243 seconds
+GFLOP/s: 83.17 GFLOP/s
+Memory Bandwidth: 0.93 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.335326 seconds
@@ -139,8 +139,8 @@ GFLOP/s: 85.86 GFLOP/s
 Memory Bandwidth: 0.82 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.195965 seconds
-GFLOP/s: 84.16 GFLOP/s
+Execution Time: 0.196263 seconds
+GFLOP/s: 84.03 GFLOP/s
 Memory Bandwidth: 0.81 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
@@ -161,9 +161,9 @@ GFLOP/s: 86.28 GFLOP/s
 Memory Bandwidth: 0.73 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.434476 seconds
-GFLOP/s: 44.29 GFLOP/s
-Memory Bandwidth: 0.37 GB/s
+Execution Time: 0.228174 seconds
+GFLOP/s: 84.33 GFLOP/s
+Memory Bandwidth: 0.71 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.348521 seconds
@@ -183,9 +183,9 @@ GFLOP/s: 86.79 GFLOP/s
 Memory Bandwidth: 0.66 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.260376 seconds
-GFLOP/s: 84.46 GFLOP/s
-Memory Bandwidth: 0.64 GB/s
+Execution Time: 0.295820 seconds
+GFLOP/s: 74.34 GFLOP/s
+Memory Bandwidth: 0.56 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.335662 seconds
@@ -205,9 +205,9 @@ GFLOP/s: 86.96 GFLOP/s
 Memory Bandwidth: 0.60 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.292261 seconds
-GFLOP/s: 84.65 GFLOP/s
-Memory Bandwidth: 0.58 GB/s
+Execution Time: 0.297849 seconds
+GFLOP/s: 83.06 GFLOP/s
+Memory Bandwidth: 0.57 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.335603 seconds
@@ -227,9 +227,9 @@ GFLOP/s: 82.01 GFLOP/s
 Memory Bandwidth: 0.52 GB/s
 
 -----Triton Blocked SpMM Metrics:
-Execution Time: 0.324303 seconds
-GFLOP/s: 84.76 GFLOP/s
-Memory Bandwidth: 0.54 GB/s
+Execution Time: 0.330968 seconds
+GFLOP/s: 83.05 GFLOP/s
+Memory Bandwidth: 0.53 GB/s
 
 -----cuSPARSE BSR SpMM Metrics:
 Execution time: 0.340200 seconds
