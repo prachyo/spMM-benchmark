@@ -92,16 +92,20 @@ def benchmark_spmm_block(A_csr, B, C, block_size=128):
     nnz_A = len(A_csr.data)  # Number of non-zero elements in sparse matrix A
     FLOP_count = 2 * nnz_A * B.shape[1]  # Each non-zero in A performs 2*N operations (1 mul, 1 add)
 
+    # Create CUDA events to record the time
+    start = torch.cuda.Event(enable_timing=True)
+    stop = torch.cuda.Event(enable_timing=True)
+
     # Launch Triton kernel (or any CUDA operation)
-    start = time.time()
+    start.record()
     kernel_launch()
+    stop.record()
 
-    # Synchronize and end event
+    # Synchronize and calculate exec time
     torch.cuda.synchronize()
-    end = time.time()
+    elapsed_time_ms = start.elapsed_time(stop)
 
-    # Calculate execution time
-    execution_time_s = end - start
+    execution_time_s = elapsed_time_ms / 1e3
 
     # Calculate FLOP/s
     FLOP_s = FLOP_count / execution_time_s  # FLOP/s

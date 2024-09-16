@@ -1,0 +1,242 @@
+
+================ m = n = k = 8192, density = 0.0, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 0.002012 seconds
+GFLOP/s: 0.00 GFLOP/s
+Memory Bandwidth: 266.83 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 0.002050 seconds
+GFLOP/s: 0.00 GFLOP/s
+Memory Bandwidth: 261.90 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 0.001689 seconds
+GFLOP/s: 0.000000
+Memory Bandwidth: 317.96 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 0.001699 seconds
+GFLOP/s: 0.000000
+Memory Bandwidth: 316.09 GB/s
+
+================ m = n = k = 8192, density = 0.02, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 0.268892 seconds
+GFLOP/s: 81.78 GFLOP/s
+Memory Bandwidth: 2.06 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 0.273343 seconds
+GFLOP/s: 80.45 GFLOP/s
+Memory Bandwidth: 2.02 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.695203 seconds
+GFLOP/s: 8.159025
+Memory Bandwidth: 0.20 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 0.497638 seconds
+GFLOP/s: 44.189194
+Memory Bandwidth: 1.10 GB/s
+
+================ m = n = k = 8192, density = 0.04, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 0.707051 seconds
+GFLOP/s: 62.20 GFLOP/s
+Memory Bandwidth: 0.80 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 0.540204 seconds
+GFLOP/s: 81.41 GFLOP/s
+Memory Bandwidth: 1.05 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.701460 seconds
+GFLOP/s: 16.280258
+Memory Bandwidth: 0.21 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 0.860946 seconds
+GFLOP/s: 51.083870
+Memory Bandwidth: 0.65 GB/s
+
+================ m = n = k = 8192, density = 0.06, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 0.830400 seconds
+GFLOP/s: 79.44 GFLOP/s
+Memory Bandwidth: 0.70 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 0.810113 seconds
+GFLOP/s: 81.43 GFLOP/s
+Memory Bandwidth: 0.72 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.696419 seconds
+GFLOP/s: 24.466036
+Memory Bandwidth: 0.21 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1.110199 seconds
+GFLOP/s: 59.422405
+Memory Bandwidth: 0.51 GB/s
+
+================ m = n = k = 8192, density = 0.08, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 1.203249 seconds
+GFLOP/s: 73.10 GFLOP/s
+Memory Bandwidth: 0.50 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 1.076557 seconds
+GFLOP/s: 81.71 GFLOP/s
+Memory Bandwidth: 0.56 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.695474 seconds
+GFLOP/s: 32.632820
+Memory Bandwidth: 0.22 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1.350452 seconds
+GFLOP/s: 65.134430
+Memory Bandwidth: 0.43 GB/s
+
+================ m = n = k = 8192, density = 0.1, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 1.525032 seconds
+GFLOP/s: 72.10 GFLOP/s
+Memory Bandwidth: 0.40 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 1.476379 seconds
+GFLOP/s: 74.47 GFLOP/s
+Memory Bandwidth: 0.42 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.693733 seconds
+GFLOP/s: 40.817398
+Memory Bandwidth: 0.22 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1.584474 seconds
+GFLOP/s: 69.392845
+Memory Bandwidth: 0.37 GB/s
+
+================ m = n = k = 8192, density = 0.12, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 1.767723 seconds
+GFLOP/s: 74.64 GFLOP/s
+Memory Bandwidth: 0.36 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 1.613273 seconds
+GFLOP/s: 81.78 GFLOP/s
+Memory Bandwidth: 0.39 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.696580 seconds
+GFLOP/s: 48.929161
+Memory Bandwidth: 0.22 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1.793845 seconds
+GFLOP/s: 73.552292
+Memory Bandwidth: 0.34 GB/s
+
+================ m = n = k = 8192, density = 0.14, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 2.080731 seconds
+GFLOP/s: 73.98 GFLOP/s
+Memory Bandwidth: 0.31 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 2.075838 seconds
+GFLOP/s: 74.15 GFLOP/s
+Memory Bandwidth: 0.31 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.685221 seconds
+GFLOP/s: 57.325497
+Memory Bandwidth: 0.23 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1.988127 seconds
+GFLOP/s: 77.425461
+Memory Bandwidth: 0.31 GB/s
+
+================ m = n = k = 8192, density = 0.16, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 2.287745 seconds
+GFLOP/s: 76.90 GFLOP/s
+Memory Bandwidth: 0.29 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 2.295186 seconds
+GFLOP/s: 76.65 GFLOP/s
+Memory Bandwidth: 0.29 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.686292 seconds
+GFLOP/s: 65.488731
+Memory Bandwidth: 0.23 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 2.190819 seconds
+GFLOP/s: 80.299576
+Memory Bandwidth: 0.28 GB/s
+
+================ m = n = k = 8192, density = 0.18, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 2.581590 seconds
+GFLOP/s: 76.66 GFLOP/s
+Memory Bandwidth: 0.26 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 2.533367 seconds
+GFLOP/s: 78.12 GFLOP/s
+Memory Bandwidth: 0.27 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.689412 seconds
+GFLOP/s: 73.589348
+Memory Bandwidth: 0.24 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 2.379842 seconds
+GFLOP/s: 83.161880
+Memory Bandwidth: 0.27 GB/s
+
+================ m = n = k = 8192, density = 0.2, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 2.799665 seconds
+GFLOP/s: 78.55 GFLOP/s
+Memory Bandwidth: 0.25 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 2.797485 seconds
+GFLOP/s: 78.61 GFLOP/s
+Memory Bandwidth: 0.25 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 2.684757 seconds
+GFLOP/s: 81.907722
+Memory Bandwidth: 0.24 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 2.543304 seconds
+GFLOP/s: 86.463257
+Memory Bandwidth: 0.25 GB/s

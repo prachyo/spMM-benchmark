@@ -35,6 +35,113 @@
     }                                                                          \
 }
 
+extern "C" void benchmark_cusparseSpMMCSR(int A_num_rows, int A_num_cols, int A_nnz, int B_num_cols,
+                                const int* hA_csrOffsets, const int* hA_columns,
+                               const float* hA_values, const float* hB,
+                               float* hC)
+{
+    int   B_num_rows      = A_num_cols;
+    int   ldb             = B_num_rows;
+    int   ldc             = A_num_rows;
+    int   B_size          = ldb * B_num_cols;
+    int   C_size          = ldc * B_num_cols;
+    float alpha           = 1.0f;
+    float beta            = 0.0f;
+
+
+    // Device memory management
+    int   *dA_csrOffsets, *dA_columns;
+    float *dA_values, *dB, *dC;
+    CHECK_CUDA( cudaMalloc((void**) &dA_csrOffsets,
+                           (A_num_rows + 1) * sizeof(int)) )
+    CHECK_CUDA( cudaMalloc((void**) &dA_columns, A_nnz * sizeof(int))    )
+    CHECK_CUDA( cudaMalloc((void**) &dA_values,  A_nnz * sizeof(float))  )
+    CHECK_CUDA( cudaMalloc((void**) &dB,         B_size * sizeof(float)) )
+    CHECK_CUDA( cudaMalloc((void**) &dC,         C_size * sizeof(float)) )
+
+    CHECK_CUDA( cudaMemcpy(dA_csrOffsets, hA_csrOffsets,
+                           (A_num_rows + 1) * sizeof(int),
+                           cudaMemcpyHostToDevice) )
+    CHECK_CUDA( cudaMemcpy(dA_columns, hA_columns, A_nnz * sizeof(int),
+                           cudaMemcpyHostToDevice) )
+    CHECK_CUDA( cudaMemcpy(dA_values, hA_values, A_nnz * sizeof(float),
+                           cudaMemcpyHostToDevice) )
+    CHECK_CUDA( cudaMemcpy(dB, hB, B_size * sizeof(float),
+                           cudaMemcpyHostToDevice) )
+    CHECK_CUDA( cudaMemcpy(dC, hC, C_size * sizeof(float),
+                           cudaMemcpyHostToDevice) )
+
+    // CUSPARSE APIs
+    cusparseHandle_t     handle = NULL;
+    cusparseSpMatDescr_t matA;
+    cusparseDnMatDescr_t matB, matC;
+    void*                dBuffer    = NULL;
+    size_t               bufferSize = 0;
+
+    CHECK_CUSPARSE( cusparseCreate(&handle) )
+    // Create sparse matrix A in CSR format
+    CHECK_CUSPARSE( cusparseCreateCsr(&matA, A_num_rows, A_num_cols, A_nnz,
+                                      dA_csrOffsets, dA_columns, dA_values,
+                                      CUSPARSE_INDEX_32I, CUSPARSE_INDEX_32I,
+                                      CUSPARSE_INDEX_BASE_ZERO, CUDA_R_32F) )
+    // Create dense matrix B
+    CHECK_CUSPARSE( cusparseCreateDnMat(&matB, A_num_cols, B_num_cols, ldb, dB,
+                                        CUDA_R_32F, CUSPARSE_ORDER_COL) )
+    // Create dense matrix C
+    CHECK_CUSPARSE( cusparseCreateDnMat(&matC, A_num_rows, B_num_cols, ldc, dC,
+                                        CUDA_R_32F, CUSPARSE_ORDER_COL) )
+    // allocate an external buffer if needed
+    CHECK_CUSPARSE( cusparseSpMM_bufferSize(
+                                 handle,
+                                 CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                 CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                 &alpha, matA, matB, &beta, matC, CUDA_R_32F,
+                                 CUSPARSE_SPMM_ALG_DEFAULT, &bufferSize) )
+    CHECK_CUDA( cudaMalloc(&dBuffer, bufferSize) )
+
+    // Create CUDA events for timing
+    cudaEvent_t start, stop;
+    CHECK_CUDA(cudaEventCreate(&start));
+    CHECK_CUDA(cudaEventCreate(&stop));
+
+    // Record start event
+    CHECK_CUDA(cudaEventRecord(start, 0));
+
+    // execute SpMM
+    CHECK_CUSPARSE( cusparseSpMM(handle,
+                                 CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                 CUSPARSE_OPERATION_NON_TRANSPOSE,
+                                 &alpha, matA, matB, &beta, matC, CUDA_R_32F,
+                                 CUSPARSE_SPMM_ALG_DEFAULT, dBuffer) )
+
+    // Record stop event
+    CHECK_CUDA(cudaEventRecord(stop, 0));
+    CHECK_CUDA(cudaEventSynchronize(stop));
+
+    // Calculate elapsed time
+    float milliseconds = 0;
+    CHECK_CUDA(cudaEventElapsedTime(&milliseconds, start, stop));
+
+    float execution_time_s = milliseconds / 1000.0f;
+
+    // Calculate GFLOPs and memory bandwidth
+    float gflops = (2.0f * A_nnz * B_num_cols) / execution_time_s / 1e9f;
+    float bytes_transferred = (A_nnz * sizeof(float) + A_nnz * sizeof(int) + A_num_rows * sizeof(int) + A_num_cols * B_num_cols * sizeof(float) + A_num_rows * B_num_cols * sizeof(float));
+    float memory_bandwidth = bytes_transferred / execution_time_s / 1e9f;
+
+    printf("\n-----cuSPARSE CSR SpMM Metrics:\n");
+    printf("Execution time: %f seconds\n", execution_time_s);
+    printf("GFLOP/s: %f\n", gflops);
+    printf("Memory Bandwidth: %.2f GB/s\n", memory_bandwidth);
+
+    // destroy matrix/vector descriptors
+    CHECK_CUSPARSE( cusparseDestroySpMat(matA) )
+    CHECK_CUSPARSE( cusparseDestroyDnMat(matB) )
+    CHECK_CUSPARSE( cusparseDestroyDnMat(matC) )
+    CHECK_CUSPARSE( cusparseDestroy(handle) )
+}
+                               
+
 extern "C" void benchmark_cusparseSpMMBSR(int A_num_rows, int A_num_cols, int A_nnz, int B_num_cols, int block_size,
                                const int* hA_csrOffsets, const int* hA_columns,
                                const float* hA_values, const float* hB,

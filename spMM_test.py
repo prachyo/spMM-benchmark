@@ -3,10 +3,9 @@ import ctypes
 import numba
 import scipy.sparse as sp
 import numpy as np
+import torch
 from spMM_CSR import benchmark_spmm, profile_spmm
 from spMM_CSR_blocked import benchmark_spmm_block
-from spMM_cuSPARSE_blocked import benchmark_cuSPARSE_blocked
-from spMM_cuSPARSE_csrmm import benchmark_cuSPARSE_csrmm
 import time
 import cupy as cp
 
@@ -29,18 +28,23 @@ def benchmark_cuSPARSE(A, B, C):
     B_cp = cp.array(B)
     C_cp = cp.array(C)
 
+    # Create CUDA events to record the time
+    start = torch.cuda.Event(enable_timing=True)
+    stop = torch.cuda.Event(enable_timing=True)
+
     # Start event for cuSPARSE spMM
-    start = time.time()
+    start.record()
 
     # Run event and synchronize
     C_cp = A_csr.dot(B_cp)  # This internally uses cuSPARSE for sparse-dense matrix multiplication
+    stop.record()
     cp.cuda.Device().synchronize()  # Ensure all operations are done
-    end = time.time()
 
     # Convert C_cp to NumPy array
     C = C_cp.get()
 
-    execution_time_s = end - start
+    elapsed_time_ms = start.elapsed_time(stop)
+    execution_time_s = elapsed_time_ms / 1e3  # in seconds
 
     # Calculate FLOPs (only for non-zero elements in A)
     nnz_A = len(A.data)  # Number of non-zero elements in sparse matrix A
@@ -77,7 +81,7 @@ def run_experiment(block_size, dim, density):
     # Run the benchmark
     benchmark_spmm(A, B, C)
     benchmark_spmm_block(A, B, C_block, block_size=128)
-    benchmark_cuSPARSE(A, B, C)
+    #benchmark_cuSPARSE(A, B, C) # benchmark for scipy's csr mm
     try:
         cusparse_bsr.benchmark_cusparseSpMMBSR(
             ctypes.c_int(A.shape[0]),
@@ -93,6 +97,21 @@ def run_experiment(block_size, dim, density):
         )
     except Exception as e:
         print(f"Error calling cuSPARSE_bsr function: {e}")
+
+    try:
+        cusparse_bsr.benchmark_cusparseSpMMCSR(
+            ctypes.c_int(A.shape[0]),
+            ctypes.c_int(A.shape[1]),
+            ctypes.c_int(A.nnz),
+            ctypes.c_int(B.shape[1]),
+            ctypes.c_void_p(A.indptr.ctypes.data),
+            ctypes.c_void_p(A.indices.ctypes.data),
+            ctypes.c_void_p(A.data.ctypes.data),
+            ctypes.c_void_p(B.ctypes.data),
+            ctypes.c_void_p(C.ctypes.data),
+        )
+    except Exception as e:
+        print(f"Error calling cuSPARSE_csr function: {e}")
 
 def main():
 

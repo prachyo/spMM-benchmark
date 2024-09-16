@@ -1,0 +1,66 @@
+
+================ m = n = k = 16384, density = 0.0, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 0.006946 seconds
+GFLOP/s: 0.00 GFLOP/s
+Memory Bandwidth: 309.17 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 0.083921 seconds
+GFLOP/s: 0.00 GFLOP/s
+Memory Bandwidth: 25.59 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 0.165420 seconds
+GFLOP/s: 0.000000
+Memory Bandwidth: 12.98 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 0.094940 seconds
+GFLOP/s: 0.000000
+Memory Bandwidth: 22.62 GB/s
+
+================ m = n = k = 16384, density = 0.02, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 2.304672 seconds
+GFLOP/s: 76.33 GFLOP/s
+Memory Bandwidth: 0.96 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 2.133233 seconds
+GFLOP/s: 82.47 GFLOP/s
+Memory Bandwidth: 1.04 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 436.553589 seconds
+GFLOP/s: 0.402979
+Memory Bandwidth: 0.01 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 597.021667 seconds
+GFLOP/s: 0.294666
+Memory Bandwidth: 0.00 GB/s
+
+================ m = n = k = 16384, density = 0.04, b = 32 ===================
+
+-----Triton SpMM Metrics:
+Execution Time: 4.365475 seconds
+GFLOP/s: 80.60 GFLOP/s
+Memory Bandwidth: 0.52 GB/s
+
+-----Triton Blocked SpMM Metrics:
+Execution Time: 4.239687 seconds
+GFLOP/s: 82.99 GFLOP/s
+Memory Bandwidth: 0.54 GB/s
+
+-----cuSPARSE BSR SpMM Metrics:
+Execution time: 431.138947 seconds
+GFLOP/s: 0.816080
+Memory Bandwidth: 0.01 GB/s
+
+-----cuSPARSE CSR SpMM Metrics:
+Execution time: 1009.870911 seconds
+GFLOP/s: 0.348405
+Memory Bandwidth: 0.00 GB/s
